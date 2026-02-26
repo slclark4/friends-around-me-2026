@@ -1,0 +1,48 @@
+:root {
+  /* Color palette */ 
+  --color-primary: #87b940; /* vivid blue */
+  --color-primary-100: #9c947a,
+  --color-primary-200: #bab7b1,
+
+  --color-accent-blue: #27c4f4;
+  --color-accent-red: #f16458; 
+  --color-accent-orange: #fcb34b; 
+  --color-accent-green: #bfd730; 
+  --color-accent-purple: #996799; 
+
+  --color-text: #333331; 
+
+  /* Semantic shades (grays) */
+  --gray-000: #fff;
+  --gray-100: #f6f6f6;
+  --gray-150: #ebecec;
+  --gray-200: #dddfdf;
+  --gray-250: #cacdcd;
+  --gray-300: #b5b8b8;
+  --gray-350: #9ea1a1;
+  --gray-400: #898c8e;
+  --gray-450: #76797c;
+  --gray-500: #64686a;
+  --gray-550: #545659;
+  --gray-600: #434547;
+  --gray-650: #333536;
+  --gray-700: #202121;
+
+  /* Typography */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial;
+  --font-mono: SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+
+  /* Misc */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-md: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+
+/* Helper for reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration: 0ms;
+  }
+}

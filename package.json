@@ -1,0 +1,22 @@
+{
+  "name": "w26-fs-friends-around-me",
+  "version": "1.0.0",
+  "description": "A Vue 3 project",
+  "main": "index/main.js",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "pinia": "^3.0.4",
+    "vue": "^3.4.0",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^5.0.0",
+    "gh-pages": "^6.3.0"
+  },
+  "homepage": "https://cuddly-adventure-7eog62k.pages.github.io"
+}

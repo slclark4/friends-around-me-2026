@@ -1,0 +1,3 @@
+## Hello!
+
+the main thing I am working on is the backend. I will be building a prototype for this. To test it out check out the index file in the backend folder. you will need to run it locally, so make sure you have the files pulled to your machine from Github and then open the index file in a live server. the "Liver Server" extension by Ritwick dey for VSC works, and once the extension is installed just right click the index file in the VSC explorer and select "open with live server".

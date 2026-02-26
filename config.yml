@@ -1,0 +1,8 @@
+exclude:
+  - node_modules/
+  - stephanie/node_modules/
+  - Joseph/Backend/node_modules/
+  - package.json
+  - package-lock.json
+  - "*.config.js"
+  - README.md
