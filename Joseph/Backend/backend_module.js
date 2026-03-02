@@ -177,8 +177,9 @@ export async function submitUserData(userData, userID = null) {
   // if not, then check the data for a matching name, and either update matching row or insert new row
   ({ data, error } = await supabase
     .from("users")
+    .select()
     .eq("full_name", fields.full_name)
-    .select());
+    );
 
   if (error) {
     console.error("Error checking for matching data:", error);
@@ -195,21 +196,22 @@ export async function submitUserData(userData, userID = null) {
       }
 
     console.log(`successfully inserted data at row ${data.id}`)
-    return data.id
+    return data[0].id
   } else {
     ({ data, error } = await supabase
       .from("users")
       .update(fields)
+      .select()
       .eq("full_name", fields.full_name)
-      .select());
+      );
 
     if (error) {
-      console.error(`Error updating data for user ${fields.user}`, error);
+      console.error(`Error updating data for user ${fields.full_name}`, error);
       return null;
     }
 
     console.log(`successfully updated data at row ${data.id}`)
-    return data.id
+    return data[0].id
   }
   
 
