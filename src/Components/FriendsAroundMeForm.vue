@@ -126,9 +126,15 @@ function onSubmit() {
 
 .form-inputs {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
+
+  @media (max-width: 850px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+  }
 }
 
 form {
@@ -138,6 +144,12 @@ form {
   align-items: center;
   gap: 1rem;
   max-width: 900px;
+
+  @media (max-width: 850px) {
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 button {
@@ -160,6 +172,13 @@ button:hover {
   gap: 2rem;
   width: 100%;
   align-items: center;
+
+  @media (max-width: 850px) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1em;
+  }
 }
 
 .second-mission {
