@@ -193,8 +193,6 @@ button:hover {
 }
 </style> -->
 
-
-
 <script setup>
 import { computed, ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -206,19 +204,19 @@ const hasSecondMission = ref(false);
 
 /* ---------------- STORE FIELDS ---------------- */
 
-const name = computed({
-  get: () => formStore.formData.name,
-  set: v => formStore.updateField("name", v)
+const full_name = computed({
+  get: () => formStore.formData.full_name,
+  set: (v) => formStore.updateField("full_name", v),
 });
 
-const school = computed({
-  get: () => formStore.formData.school,
-  set: v => formStore.updateField("school", v)
+const highschool_name = computed({
+  get: () => formStore.formData.highschool_name,
+  set: (v) => formStore.updateField("highschool_name", v),
 });
 
 const languages = computed({
   get: () => formStore.formData.languages,
-  set: v => formStore.updateField("languages", v)
+  set: (v) => formStore.updateField("languages", v),
 });
 
 /* ---------------- SCHOOL AUTOCOMPLETE ---------------- */
@@ -235,18 +233,20 @@ const allSchools = computed(() =>
   Object.values(schoolsMap.value)
     .flat()
     .filter(Boolean)
-    .sort((a,b)=>a.localeCompare(b))
+    .sort((a, b) => a.localeCompare(b)),
 );
 
-const suggestions = computed(()=>{
-  if(showCitySelect.value) return [];
+const suggestions = computed(() => {
+  if (showCitySelect.value) return [];
   const q = schoolQuery.value.toLowerCase().trim();
-  if(!q) return allSchools.value.slice(0,50);
-  return allSchools.value.filter(s=>s.toLowerCase().includes(q)).slice(0,50);
+  if (!q) return allSchools.value.slice(0, 50);
+  return allSchools.value
+    .filter((s) => s.toLowerCase().includes(q))
+    .slice(0, 50);
 });
 
-watch(schoolQuery,v=>{
-  school.value = v.trim();
+watch(schoolQuery, (v) => {
+  highschool_name.value = v.trim();
 });
 
 /* ---------------- LANGUAGE AUTOCOMPLETE ---------------- */
@@ -259,13 +259,15 @@ const allLanguages = computed(() =>
   Object.values(languagesMap.value)
     .flat()
     .filter(Boolean)
-    .sort((a,b)=>a.localeCompare(b))
+    .sort((a, b) => a.localeCompare(b)),
 );
 
-const languageSuggestions = computed(()=>{
+const languageSuggestions = computed(() => {
   const q = languageQuery.value.toLowerCase().trim();
-  if(!q) return allLanguages.value.slice(0,50);
-  return allLanguages.value.filter(l=>l.toLowerCase().includes(q)).slice(0,50);
+  if (!q) return allLanguages.value.slice(0, 50);
+  return allLanguages.value
+    .filter((l) => l.toLowerCase().includes(q))
+    .slice(0, 50);
 });
 
 /* ---------------- CITIES ---------------- */
@@ -280,38 +282,35 @@ const showMissionSuggestions = ref(false);
 const mission2Query = ref("");
 const showMission2Suggestions = ref(false);
 
-function normalize(str){
+function normalize(str) {
   return str
     .toLowerCase()
-    .replace(/,/g, "")       // remove commas
-    .replace(/\s+/g, " ")    // normalize extra spaces
+    .replace(/,/g, "") // remove commas
+    .replace(/\s+/g, " ") // normalize extra spaces
     .trim();
 }
 
-function cityFilter(q){
-  if(!q) return [];
+function cityFilter(q) {
+  if (!q) return [];
 
   const normalizedQuery = normalize(q);
 
   return Object.values(citiesMap.value)
     .flat()
-    .filter(c => normalize(c).includes(normalizedQuery))
-    .slice(0,50);
+    .filter((c) => normalize(c).includes(normalizedQuery))
+    .slice(0, 50);
 }
 
-
-const missionCitySuggestions = computed(()=> cityFilter(missionQuery.value));
-const mission2CitySuggestions = computed(()=> cityFilter(mission2Query.value));
+const missionCitySuggestions = computed(() => cityFilter(missionQuery.value));
+const mission2CitySuggestions = computed(() => cityFilter(mission2Query.value));
 
 /* ---------------- LOAD CSV ---------------- */
 
-const BASE = process.env.NODE_ENV === "production"
-  ? "/friends-around-me-2026/"
-  : "/";
+const BASE =
+  process.env.NODE_ENV === "production" ? "/friends-around-me-2026/" : "/";
 
-onMounted(async()=>{
-  try{
-
+onMounted(async () => {
+  try {
     // schools
     const s = await fetch(`${BASE}updated_school_data.csv`);
     const st = await s.text();
@@ -320,10 +319,13 @@ onMounted(async()=>{
     const sIndex = sHead.indexOf("SCH_NAME");
 
     schoolsMap.value = {
-      ALL: slines.slice(1).map(l=>{
-        const cols=l.split(",");
-        return cols[sIndex]?.replace(/"/g,"").trim();
-      }).filter(Boolean)
+      ALL: slines
+        .slice(1)
+        .map((l) => {
+          const cols = l.split(",");
+          return cols[sIndex]?.replace(/"/g, "").trim();
+        })
+        .filter(Boolean),
     };
 
     // languages
@@ -334,10 +336,13 @@ onMounted(async()=>{
     const lIndex = lHead.indexOf("lang");
 
     languagesMap.value = {
-      ALL: llines.slice(1).map(l=>{
-        const cols=l.split(",");
-        return cols[lIndex]?.replace(/"/g,"").trim();
-      }).filter(Boolean)
+      ALL: llines
+        .slice(1)
+        .map((l) => {
+          const cols = l.split(",");
+          return cols[lIndex]?.replace(/"/g, "").trim();
+        })
+        .filter(Boolean),
     };
 
     // cities
@@ -348,354 +353,377 @@ onMounted(async()=>{
     const nameIndex = cHead.indexOf("name");
 
     citiesMap.value = {
-      ALL: clines.slice(1).map(l=>{
-        const cols = l.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-        return cols[nameIndex]?.replace(/"/g,"").trim();
-      }).filter(Boolean)
+      ALL: clines
+        .slice(1)
+        .map((l) => {
+          const cols = l.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+          return cols[nameIndex]?.replace(/"/g, "").trim();
+        })
+        .filter(Boolean),
     };
-
-  }catch(e){
-    console.error("CSV load failed",e);
+  } catch (e) {
+    console.error("CSV load failed", e);
   }
 });
 
 /* ---------------- SELECTORS ---------------- */
 
-function selectSchool(name){
-  schoolQuery.value=name;
-  showSuggestions.value=false;
+function selectSchool(name) {
+  schoolQuery.value = name;
+  showSuggestions.value = false;
 }
 
-function selectLanguage(name){
-  if(!languages.value.includes(name))
-    languages.value=[...languages.value,name];
+function selectLanguage(name) {
+  if (!languages.value.includes(name))
+    languages.value = [...languages.value, name];
 
-  languageQuery.value="";
-  showLangSuggestions.value=false;
+  languageQuery.value = "";
+  showLangSuggestions.value = false;
 }
 
-function removeLanguage(lang){
-  languages.value = languages.value.filter(l=>l!==lang);
+function removeLanguage(lang) {
+  languages.value = languages.value.filter((l) => l !== lang);
 }
 
-function selectMissionCity(city){
-  missionQuery.value=city;
-  formStore.updateField("mission",city);
-  showMissionSuggestions.value=false;
+function selectMissionCity(city) {
+  missionQuery.value = city;
+  formStore.updateField("mission", city);
+  showMissionSuggestions.value = false;
 }
 
-function selectMission2City(city){
-  mission2Query.value=city;
-  formStore.updateField("mission2",city);
-  showMission2Suggestions.value=false;
+function selectMission2City(city) {
+  mission2Query.value = city;
+  formStore.updateField("mission2", city);
+  showMission2Suggestions.value = false;
 }
 
 /* ---------------- NAV KEYS ---------------- */
 
-function down(){
-  if(highlightedIndex.value < suggestions.value.length-1)
+function down() {
+  if (highlightedIndex.value < suggestions.value.length - 1)
     highlightedIndex.value++;
 }
 
-function up(){
-  if(highlightedIndex.value>0)
-    highlightedIndex.value--;
+function up() {
+  if (highlightedIndex.value > 0) highlightedIndex.value--;
 }
 
-function enter(){
-  if(highlightedIndex.value>=0)
+function enter() {
+  if (highlightedIndex.value >= 0)
     selectSchool(suggestions.value[highlightedIndex.value]);
 }
 
 /* ---------------- BLUR HELPERS ---------------- */
 
-function hideSchool(){ setTimeout(()=>showSuggestions.value=false,150); }
-function hideLang(){ setTimeout(()=>showLangSuggestions.value=false,150); }
-function hideMission(){ setTimeout(()=>showMissionSuggestions.value=false,150); }
-function hideMission2(){ setTimeout(()=>showMission2Suggestions.value=false,150); }
+function hideSchool() {
+  setTimeout(() => (showSuggestions.value = false), 150);
+}
+function hideLang() {
+  setTimeout(() => (showLangSuggestions.value = false), 150);
+}
+function hideMission() {
+  setTimeout(() => (showMissionSuggestions.value = false), 150);
+}
+function hideMission2() {
+  setTimeout(() => (showMission2Suggestions.value = false), 150);
+}
 
 /* ---------------- SUBMIT ---------------- */
 
-function onSubmit(){
+function onSubmit() {
   router.push("/results");
 }
 </script>
 
 <template>
-<div class="friends-form-wrapper">
-<form @submit.prevent="onSubmit">
+  <div class="friends-form-wrapper">
+    <form @submit.prevent="onSubmit">
+      <!-- <div class="form-inputs"> -->
+      <!-- ROW 1 -->
+      <div class="row-wrapper">
+        <div class="dropdown-wrapper">
+          <label>Full Name</label>
+          <input
+            v-model="name"
+            type="text"
+            placeholder="Enter your full name..."
+          />
+        </div>
 
-<div class="form-inputs">
+        <div class="dropdown-wrapper">
+          <label>Where did you graduate high school?</label>
 
-<!-- ROW 1 -->
-<div class="row-wrapper">
+          <input
+            v-model="schoolQuery"
+            @focus="showSuggestions = true"
+            @blur="hideSchool"
+            @keydown.down.prevent="down"
+            @keydown.up.prevent="up"
+            @keydown.enter.prevent="enter"
+            placeholder="Start typing school..."
+          />
 
-<div class="dropdown-wrapper">
-  <label>Full Name</label>
-  <input
-    v-model="name"
-    type="text"
-    placeholder="Enter your full name..."
-  />
-</div>
+          <ul v-if="showSuggestions" class="suggestions-list">
+            <li
+              v-for="(s, i) in suggestions"
+              :key="s + i"
+              :class="{ highlighted: i === highlightedIndex }"
+              @mousedown.prevent="selectSchool(s)"
+            >
+              {{ s }}
+            </li>
 
+            <!-- Always visible inside dropdown -->
+            <li
+              class="add-new"
+              @mousedown.prevent="
+                showCitySelect = true;
+                showSuggestions = false;
+                highlightedIndex = -1;
+              "
+            >
+              Don't see your high school?
+            </li>
+          </ul>
 
-<div class="dropdown-wrapper">
-<label>Where did you graduate high school?</label>
+          <div v-if="showCitySelect" style="margin-top: 0.5rem">
+            <input v-model="cityQuery" placeholder="Enter your city..." />
+          </div>
+        </div>
+      </div>
 
-<input
-v-model="schoolQuery"
-@focus="showSuggestions=true"
-@blur="hideSchool"
-@keydown.down.prevent="down"
-@keydown.up.prevent="up"
-@keydown.enter.prevent="enter"
-placeholder="Start typing school..."
-/>
+      <!-- ROW 2 -->
+      <div class="row-wrapper row-spacing">
+        <!-- Languages -->
+        <div class="dropdown-wrapper">
+          <label>Languages Spoken</label>
 
-<ul v-if="showSuggestions" class="suggestions-list">
+          <input
+            v-model="languageQuery"
+            @focus="showLangSuggestions = true"
+            @blur="hideLang"
+            placeholder="Add language(s)..."
+          />
 
-  <li
-    v-for="(s,i) in suggestions"
-    :key="s+i"
-    :class="{highlighted:i===highlightedIndex}"
-    @mousedown.prevent="selectSchool(s)"
-  >
-    {{s}}
-  </li>
+          <ul
+            v-if="showLangSuggestions && languageSuggestions.length"
+            class="suggestions-list"
+          >
+            <li
+              v-for="(l, i) in languageSuggestions"
+              :key="l + i"
+              @mousedown.prevent="selectLanguage(l)"
+            >
+              {{ l }}
+            </li>
+          </ul>
 
-  <!-- Always visible inside dropdown -->
-  <li
-    class="add-new"
-    @mousedown.prevent="
-      showCitySelect=true;
-      showSuggestions=false;
-      highlightedIndex=-1;
-    "
-  >
-    Don't see your high school?
-  </li>
+          <div class="tag-container">
+            <span v-for="lang in languages" :key="lang" class="tag">
+              {{ lang }}
+              <button @click.prevent="removeLanguage(lang)">×</button>
+            </span>
+          </div>
+        </div>
 
-</ul>
+        <!-- Mission Column -->
+        <div>
+          <div class="dropdown-wrapper">
+            <label>Where did you serve your mission?</label>
 
-<div v-if="showCitySelect" style="margin-top:.5rem;">
-<input v-model="cityQuery" placeholder="Enter your city..."/>
-</div>
+            <input
+              v-model="missionQuery"
+              @focus="showMissionSuggestions = true"
+              @blur="hideMission"
+              placeholder="Start typing city..."
+            />
 
-</div>
-</div>
+            <ul
+              v-if="showMissionSuggestions && missionCitySuggestions.length"
+              class="suggestions-list"
+            >
+              <li
+                v-for="c in missionCitySuggestions"
+                :key="c"
+                @mousedown.prevent="selectMissionCity(c)"
+              >
+                {{ c }}
+              </li>
+            </ul>
+          </div>
 
-<!-- ROW 2 -->
-<div class="row-wrapper row-spacing">
+          <!-- Checkbox UNDER Mission 1 -->
+          <label class="checkbox-label" style="margin-top: 1rem">
+            <input type="checkbox" v-model="hasSecondMission" />
+            I served in more than one mission
+          </label>
 
+          <!-- Second Mission (conditionally shown) -->
+          <div
+            v-if="hasSecondMission"
+            class="dropdown-wrapper"
+            style="margin-top: 1rem"
+          >
+            <label>Second Mission Location</label>
 
-  <!-- Languages -->
-  <div class="dropdown-wrapper">
-    <label>Languages Spoken</label>
+            <input
+              v-model="mission2Query"
+              @focus="showMission2Suggestions = true"
+              @blur="hideMission2"
+              placeholder="Start typing city..."
+            />
 
-    <input
-      v-model="languageQuery"
-      @focus="showLangSuggestions=true"
-      @blur="hideLang"
-      placeholder="Add language(s)..."
-    />
+            <ul
+              v-if="showMission2Suggestions && mission2CitySuggestions.length"
+              class="suggestions-list"
+            >
+              <li
+                v-for="c in mission2CitySuggestions"
+                :key="c"
+                @mousedown.prevent="selectMission2City(c)"
+              >
+                {{ c }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- </div> -->
 
-    <ul v-if="showLangSuggestions && languageSuggestions.length" class="suggestions-list">
-      <li
-        v-for="(l,i) in languageSuggestions"
-        :key="l+i"
-        @mousedown.prevent="selectLanguage(l)"
-      >
-        {{l}}
-      </li>
-    </ul>
-
-    <div class="tag-container">
-      <span v-for="lang in languages" :key="lang" class="tag">
-        {{lang}}
-        <button @click.prevent="removeLanguage(lang)">×</button>
-      </span>
-    </div>
+      <button type="submit">Submit</button>
+    </form>
   </div>
-
-  <!-- Mission Column -->
-  <div>
-    <div class="dropdown-wrapper">
-      <label>Where did you serve your mission?</label>
-
-      <input
-        v-model="missionQuery"
-        @focus="showMissionSuggestions=true"
-        @blur="hideMission"
-        placeholder="Start typing city..."
-      />
-
-      <ul v-if="showMissionSuggestions && missionCitySuggestions.length" class="suggestions-list">
-        <li
-          v-for="c in missionCitySuggestions"
-          :key="c"
-          @mousedown.prevent="selectMissionCity(c)"
-        >
-          {{c}}
-        </li>
-      </ul>
-    </div>
-
-    <!-- Checkbox UNDER Mission 1 -->
-    <label class="checkbox-label" style="margin-top:1rem;">
-      <input type="checkbox" v-model="hasSecondMission" />
-      I served in more than one mission
-    </label>
-
-    <!-- Second Mission (conditionally shown) -->
-    <div v-if="hasSecondMission" class="dropdown-wrapper" style="margin-top:1rem;">
-      <label>Second Mission Location</label>
-
-      <input
-        v-model="mission2Query"
-        @focus="showMission2Suggestions=true"
-        @blur="hideMission2"
-        placeholder="Start typing city..."
-      />
-
-      <ul v-if="showMission2Suggestions && mission2CitySuggestions.length" class="suggestions-list">
-        <li
-          v-for="c in mission2CitySuggestions"
-          :key="c"
-          @mousedown.prevent="selectMission2City(c)"
-        >
-          {{c}}
-        </li>
-      </ul>
-    </div>
-  </div>
-
-</div>
-
-
-
-
-</div>
-
-<button type="submit">Submit</button>
-</form>
-</div>
 </template>
 
 <style scoped>
-.friends-form-wrapper{
-  display:flex;
-  justify-content:center;
-  margin-bottom:2rem;
-  border:5px solid #88b940;
-  border-radius:1em;
-  padding:1.5em 1em;
+.friends-form-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  border: 5px solid #88b940;
+  border-radius: 1em;
+  padding: 1.5em 1em;
 }
 
-form{
-  display:flex;
-  flex-direction:column;
-  gap:1rem;
-  width:100%;
-  max-width:900px;
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 900px;
+
+  @media (max-width: 850px) {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 /* FIXED: align items from the top */
-.row-wrapper{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:2rem;
-  align-items:start;
+.row-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+
+  @media (max-width: 850px) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1em;
+  }
 }
 
-.dropdown-wrapper{
-  position:relative;
-  display:flex;
-  flex-direction:column;
+.dropdown-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 /* FIXED: make labels block + match TextBox sizing */
-.dropdown-wrapper label{
-  display:block;
-  margin-bottom:5px;
-  font-size:1.1em;
+.dropdown-wrapper label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 1.1em;
 }
 
 /* Match TextBox input styling exactly */
-.dropdown-wrapper input{
-  padding:8px;
-  border:1px solid var(--color-primary);
-  border-radius:4px;
-  width:350px;
-  box-sizing:border-box;
-  font-size:1rem;
+.dropdown-wrapper input {
+  padding: 8px;
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  width: 350px;
+  box-sizing: border-box;
+  font-size: 1rem;
 }
 
-.suggestions-list{
-  position:absolute;
-  top:100%;
-  left:0;
-  right:0;
-  background:white;
-  border:1px solid #ccc;
-  border-radius:6px;
-  max-height:200px;
-  overflow:auto;
-  margin-top:2px;
-  z-index:100;
-  list-style:none;
-  padding:0;
+.suggestions-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  max-height: 200px;
+  overflow: auto;
+  margin-top: 2px;
+  z-index: 100;
+  list-style: none;
+  padding: 0;
 }
 
-.suggestions-list li{
-  padding:.4rem .6rem;
-  cursor:pointer;
+.suggestions-list li {
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
 }
 
-.highlighted{
-  background:#eef7ea;
+.highlighted {
+  background: #eef7ea;
 }
 
-.add-new{
-  font-weight:600;
-  color:#4a7c2f;
-  border-top:1px solid #ddd;
+.add-new {
+  font-weight: 600;
+  color: #4a7c2f;
+  border-top: 1px solid #ddd;
 }
 
-.tag-container{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.3rem;
-  margin-top:.4rem;
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.4rem;
 }
 
-.tag{
-  background:#eef7ea;
-  padding:.25rem .5rem;
-  border-radius:999px;
-  font-size:.8rem;
-  display:flex;
-  align-items:center;
-  gap:.3rem;
+.tag {
+  background: #eef7ea;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-.tag button{
-  background:none;
-  border:none;
-  cursor:pointer;
-  font-weight:bold;
+.tag button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-button[type="submit"]{
-  padding:.6rem;
-  background:var(--color-primary);
-  color:white;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
+button[type="submit"] {
+  padding: 0.6rem;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
-.row-spacing{
-  margin-top:1rem;
-}
+.row-spacing {
+  margin-top: 1rem;
 
+  @media (max-width: 850px) {
+    margin-top: 0;
+  }
+}
 </style>

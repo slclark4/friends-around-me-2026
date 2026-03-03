@@ -55,8 +55,6 @@ input {
 }
 </style> -->
 
-
-
 <script setup>
 import { defineProps, defineEmits, computed } from "vue";
 
@@ -99,5 +97,18 @@ input {
   width: 350px;
   box-sizing: border-box;
   font-size: 1rem;
+
+  @media (max-width: 850px) {
+    min-width: 500px;
+  }
+  @media (max-width: 650px) {
+    min-width: 400px;
+  }
+  @media (max-width: 500px) {
+    min-width: 350px;
+  }
+  @media (max-width: 400px) {
+    min-width: 325px;
+  }
 }
 </style>
